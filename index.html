@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel de Automação</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 60px;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px;
+      width: 300px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    #resultado {
+      margin-top: 30px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Painel de Automações</h1>
+
+  <button class="btn" onclick="dispararWebhook('https://n8n.disparopro.com.br/webhook/idtxbft', 'Preenchimento IDTs')">Executar Preenchimento IDT x BRASILFONE</button>
+  <button class="btn" onclick="dispararWebhook('https://n8n.disparopro.com.br/webhook/twilioxbft', 'Preenchimento Twilio')">Executar Preenchimento TWILIO x BRASILFONE</button>
+
+  <p id="resultado"></p>
+
+  <script>
+    function dispararWebhook(url, nomeFluxo) {
+      const payload = {
+        origem: "painel-web",
+        acao: nomeFluxo,
+        timestamp: new Date().toISOString()
+      };
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Erro na requisição');
+        return response.text();
+      })
+      .then(data => {
+        document.getElementById('resultado').innerText = `✅ Fluxo "${nomeFluxo}" disparado com sucesso!`;
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('resultado').innerText = `❌ Erro ao disparar o fluxo "${nomeFluxo}".`;
+      });
+    }
+  </script>
+
+</body>
+</html>
